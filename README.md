@@ -7,8 +7,8 @@ The resulting polygon can be modified at the level of the distance of the vertic
 
 ## Content
 Two scripts are provided in this project. 
-- **PolyMeshData** which contains all the logic to create a polygon mesh,
-- **PolyNode** which is an example script for generating a polygon using PolyMeshData.
+- **PolyMeshData** which contains all the logic to create a polygon mesh. It contains the PolyMeshData class, the HeightRenderer and PolyMeshRendererSettings structures.
+- **PolyNode** which is an example script for generating a polygon using PolyMeshData. It contains the [Monobehaviour Class](https://docs.unity3d.com/ScriptReference/MonoBehaviour.html) PolyNode.
 
 ## Documentation
 
@@ -16,7 +16,7 @@ Two scripts are provided in this project.
 - **[Material](https://docs.unity3d.com/ScriptReference/Material.html) HeightRenderer.Material**
 - **float HeightRenderer.Height**
   
-### PolyMeshRendererSettings
+### PolyMeshRendererSettings Struct
 - **[Material](https://docs.unity3d.com/ScriptReference/Material.html) PolyMeshRendererSettings.BaseMaterial** : Material for the base of the polygon and the lower part of the polygon sides
 - **[Material](https://docs.unity3d.com/ScriptReference/Material.html) PolyMeshRendererSettings.TopMaterial** : Material for the upper part of the polygon sides
 - **HeightRenderer[] PolyMeshRendererSettings.HeightsRenderer** : Parameters for rendering the height levels of the top of the polygon.
