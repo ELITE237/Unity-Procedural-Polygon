@@ -32,7 +32,7 @@ Two scripts are provided in this project.
 - **float[] PolyMeshData.PolyHeights** : The different heights of the polygon vertices of the top side.
 - **float PolyMeshData.Slope** : A value between -1 and 1 that changes the height of the center of the top face of the polygon to produce a concave (-1), flat (0), or convex (1) face.
 - **bool PolyMeshData.Curving** : Determines whether the slope of a vertex at the center of both of the top face will be curved or not.
-- **float PolyMeshData.CuttOff** : The height at which the polygon was cut in order to use these two basic materials. This value is automatically clamped between the different heights of the polygon's vertices.
+- **float PolyMeshData.CutOff** : The height at which the polygon was cut in order to use these two basic materials. This value is automatically clamped between the different heights of the polygon's vertices.
 - **float[] PolyMeshData.MeshHeights** : The height limits for the creation of the different sub-meshes of the top face for a rendering in several materials.
 - **float PolyMeshData.RendFactor** : A value between 0 and 1 that determines the height to be taken for a triangle of the mesh for its attribution to a sub-mesh.
 - **void PolyMeshData.SetSummits(int polyLen, int sampling = 1, float floretFactor = 0f, float[] baseSizes = null, float[] topSizes = null, float[] summitsAngles = null)** : Assigns the various parameters to the corresponding properties for generating polygon vertices.
