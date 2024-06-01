@@ -12,11 +12,11 @@ Two scripts are provided in this project.
 
 ## Documentation
 
-### HeightRenderer Struct
+### HeightRenderer Structure
 - **[Material](https://docs.unity3d.com/ScriptReference/Material.html) HeightRenderer.Material**
 - **float HeightRenderer.LimitHeight** : A value between 0 and 1.
   
-### PolyMeshRendererSettings Struct
+### PolyMeshRendererSettings Structure
 - **[Material](https://docs.unity3d.com/ScriptReference/Material.html) PolyMeshRendererSettings.BaseMaterial** : Material for the base of the polygon and the lower part of the polygon sides
 - **[Material](https://docs.unity3d.com/ScriptReference/Material.html) PolyMeshRendererSettings.TopMaterial** : Material for the upper part of the polygon sides
 - **HeightRenderer[] PolyMeshRendererSettings.HeightsRenderer** : Parameters for rendering the height levels of the top of the polygon.
