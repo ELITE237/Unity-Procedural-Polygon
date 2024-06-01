@@ -7,8 +7,8 @@ The resulting polygon can be modified at the level of the distance of the vertic
 
 ## Content
 Two scripts are provided in this project. 
-- **PolyMeshData** which contains all the logic to create a polygon mesh. It contains the PolyMeshData class, the HeightRenderer and PolyMeshRendererSettings structures.
-- **PolyNode** which is an example script for generating a polygon using PolyMeshData. It contains the [Monobehaviour Class](https://docs.unity3d.com/ScriptReference/MonoBehaviour.html) PolyNode.
+- **PolyMeshData.cs** which contains all the logic to create a polygon mesh. It contains the PolyMeshData class, the HeightRenderer and PolyMeshRendererSettings structures.
+- **PolyNode.cs** which is an example script for generating a polygon using PolyMeshData. It contains the [Monobehaviour Class](https://docs.unity3d.com/ScriptReference/MonoBehaviour.html) PolyNode.
 
 ## Documentation
 
