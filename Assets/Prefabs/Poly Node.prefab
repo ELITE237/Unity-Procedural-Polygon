@@ -1,0 +1,166 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &179729968791362824
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 991405467718109788}
+  - component: {fileID: 2190388687269165895}
+  - component: {fileID: -7124634444003399804}
+  - component: {fileID: 5725602937599753228}
+  - component: {fileID: -2527603022175199701}
+  m_Layer: 0
+  m_Name: Poly Node
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &991405467718109788
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 179729968791362824}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!33 &2190388687269165895
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 179729968791362824}
+  m_Mesh: {fileID: 0}
+--- !u!23 &-7124634444003399804
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 179729968791362824}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 2100000, guid: 98f24a8dce9e5174884f7f937dfdcd62, type: 2}
+  - {fileID: 2100000, guid: 95541b26ebe674d48b22e3b3b1929512, type: 2}
+  - {fileID: 2100000, guid: 7fd90d61bac241b4fb9c9306dd7f7e3e, type: 2}
+  - {fileID: 2100000, guid: db3cfea02321c3848a385e939e8fd639, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_AdditionalVertexStreams: {fileID: 0}
+--- !u!64 &5725602937599753228
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 179729968791362824}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 0}
+--- !u!114 &-2527603022175199701
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 179729968791362824}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fd1f8ba6267bec44f9190283d6dc921e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  <PolyLen>k__BackingField: 6
+  <Sampling>k__BackingField: 4
+  <BaseSizes>k__BackingField:
+  - 10
+  - 10
+  - 10
+  - 10
+  - 10
+  - 10
+  <TopSizes>k__BackingField:
+  - 12
+  - 12
+  - 12
+  - 12
+  - 12
+  - 12
+  <SummitsAngles>k__BackingField:
+  - 0
+  - 60
+  - 120
+  - 180
+  - 240
+  - 300
+  <PolyHeights>k__BackingField:
+  - 6
+  - 5
+  - 2
+  - 1
+  - 3
+  - 4
+  <Slope>k__BackingField: 0
+  <Curving>k__BackingField: 0
+  <CutOff>k__BackingField: 0.25
+  <RendererSettings>k__BackingField:
+    BaseMaterial: {fileID: 2100000, guid: 98f24a8dce9e5174884f7f937dfdcd62, type: 2}
+    TopMaterial: {fileID: 2100000, guid: 95541b26ebe674d48b22e3b3b1929512, type: 2}
+    HeightsRenderer:
+    - Material: {fileID: 2100000, guid: 7fd90d61bac241b4fb9c9306dd7f7e3e, type: 2}
+      LimitHeight: 0.5
+    - Material: {fileID: 2100000, guid: db3cfea02321c3848a385e939e8fd639, type: 2}
+      LimitHeight: 5
+  <RendFactor>k__BackingField: 0.5
