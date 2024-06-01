@@ -11,6 +11,17 @@ Two scripts are provided in this project.
 - **PolyNode** which is an example script for generating a polygon using PolyMeshData.
 
 ## Documentation
+
+### HeightRenderer Struct
+- **[Material](https://docs.unity3d.com/ScriptReference/Material.html) HeightRenderer.Material**
+- **float HeightRenderer.Height**
+  
+### PolyMeshRendererSettings
+- **[Material](https://docs.unity3d.com/ScriptReference/Material.html) PolyMeshRendererSettings.BaseMaterial** : Material for the base of the polygon and the lower part of the polygon sides
+- **[Material](https://docs.unity3d.com/ScriptReference/Material.html) PolyMeshRendererSettings.TopMaterial** : Material for the upper part of the polygon sides
+- **HeightRenderer[] PolyMeshRendererSettings.HeightsRenderer** : Parameters for rendering the height levels of the top of the polygon.
+
+### PolyMeshData Class
 - **const int PolyMeshData.MinPolyLen** : The minimum number of sides for a polygon. its value is 3.
 - **int PolyMeshData.PolyLen** : The number of sides of the polygon.
 - **int PolyMeshData.Sampling** : The sampling level for the top face of the polygon. its minimum value is 1.
@@ -29,4 +40,4 @@ Two scripts are provided in this project.
 - **void PolyMeshData.SetMeshHeights(float[] meshHeights, float rendFactor)** : Assigns the various parameters to the corresponding properties for generating sub-meshes polygon.
 - **void PolyMeshData.SetToRegularPolygon(int polyLen, int sampling, float floretFactor, float baseSize, float topSize, float angleOffset)** : Assigns values to generate a regular polygon (single size, evenly spaced vertices).
 - **void PolyMeshData.UseSingleHeight(float height)** : Assigns the values to generate a polygon with the vertices of the top face at the same height.
-- **Mesh PolyMeshData.CreateMesh()** : Returns a mesh that can be used for a [MeshFilter](https://docs.unity3d.com/ScriptReference/MeshFilter.html), [MeshCollider](https://docs.unity3d.com/ScriptReference/MeshCollider.html), or [MeshRenderer](https://docs.unity3d.com/ScriptReference/MeshRenderer.html).
+- **[Mesh](https://docs.unity3d.com/ScriptReference/Mesh.html) PolyMeshData.CreateMesh()** : Returns a mesh that can be used for a [MeshFilter](https://docs.unity3d.com/ScriptReference/MeshFilter.html), [MeshCollider](https://docs.unity3d.com/ScriptReference/MeshCollider.html), or [MeshRenderer](https://docs.unity3d.com/ScriptReference/MeshRenderer.html).
