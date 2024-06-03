@@ -126,9 +126,11 @@ public class PolyMeshData
     }
 
     public bool Floret => FloretFactor != 0f;
-
-    private float CenterHeight => Lerp3(PolyHeights.Min(), PolyHeights.Sum() / PolyLen, PolyHeights.Max(), Slope);
-    private int VerticesLen => Mathf.RoundToInt(PolyLen + 1 + (PolyLen * Sampling) + (1 + Sampling * (Sampling + 1) * (PolyLen / 2f)));
+    public int BaseLen => 1 + 2 * PolyLen;
+    public int MiddleLen => 2 * PolyLen * Sampling;
+    public int TopLen => 1 + Mathf.RoundToInt(Sampling * (Sampling + 1) * (PolyLen / 2f));
+    public int VerticesLen => BaseLen + MiddleLen + TopLen;
+    public float CenterHeight => Lerp3(PolyHeights.Min(), PolyHeights.Sum() / PolyLen, PolyHeights.Max(), Slope);
 
     private float[] SetSizeArray(float[] array, int size, float defaultValue = 0f, float minValue = float.MinValue, float maxValue = float.MaxValue)
     {
@@ -239,8 +241,7 @@ public class PolyMeshData
     {
         vertices = new Vector3[VerticesLen];
 
-        Vector3[] polySummits = new Vector3[PolyLen];
-        vertices[PolyLen] = Vector3.zero;
+        vertices[0] = Vector3.zero;
 
         for (int polyIndex = 0; polyIndex < PolyLen; polyIndex++)
         {
@@ -256,37 +257,41 @@ public class PolyMeshData
 
             Vector3 dir = new(Mathf.Cos(angle), 0f, Mathf.Sin(angle));
 
-            vertices[polyIndex] = BaseSizes[polyIndex] * factor * dir;
-            polySummits[polyIndex] = TopSizes[polyIndex] * factor * dir;
+            vertices[BI(0, polyIndex)] = BaseSizes[polyIndex] * factor * dir;
+            vertices[TI(Sampling, polyIndex)] = TopSizes[polyIndex] * factor * dir;
         }
 
         for (int polyIndex = 0; polyIndex < PolyLen; polyIndex++)
         {
             int nextPolyIndex = (polyIndex + 1) % PolyLen;
+
             for (int sample = 0; sample < Sampling; sample++)
             {
                 float samplingRatio = (float)sample / Sampling;
 
-                float height = -CutOff + Mathf.Lerp(PolyHeights[polyIndex], PolyHeights[nextPolyIndex], samplingRatio);
-                float cutRatio = height + CutOff != 0f ? height / (height + CutOff) : 1f;
+                float height = Mathf.Lerp(PolyHeights[polyIndex], PolyHeights[nextPolyIndex], samplingRatio);
+                float cutRatio = height != 0f ? (height - CutOff) / height : 1f;
 
-                Vector3 polyVertex = Vector3.Lerp(vertices[polyIndex], polySummits[polyIndex], cutRatio);
-                Vector3 nextPolyVertex = Vector3.Lerp(vertices[nextPolyIndex], polySummits[nextPolyIndex], cutRatio);
+                Vector3 polyVertex = Vector3.Lerp(vertices[BI(0, polyIndex)], vertices[TI(Sampling, polyIndex)], cutRatio);
+                Vector3 nextPolyVertex = Vector3.Lerp(vertices[BI(0, nextPolyIndex)], vertices[TI(Sampling, nextPolyIndex)], cutRatio);
                 Vector3 vertex = Vector3.Lerp(polyVertex, nextPolyVertex, samplingRatio);
 
-                int vertexIndex = HIL1(polyIndex, sample);
-                vertices[vertexIndex] = new Vector3(vertex.x, height, vertex.z);
+                vertices[MI(0, polyIndex, sample)] = new Vector3(vertex.x, height - CutOff, vertex.z);
+                vertices[MI(1, polyIndex, sample)] = new Vector3(vertex.x, height, vertex.z);
             }
+
+            vertices[BI(1, polyIndex)] = vertices[MI(0, polyIndex)];
         }
 
         vertices[VerticesLen - 1] = new Vector3(0f, CenterHeight, 0f);
 
         for (int subSampling = Sampling; subSampling > 0; subSampling--)
         {
+            float samplingRatio = (float)subSampling / Sampling;
+
             for (int polyIndex = 0; polyIndex < PolyLen; polyIndex++)
             {
                 int nextPolyIndex = (polyIndex + 1) % PolyLen;
-                float samplingRatio = (float)subSampling / Sampling;
 
                 for (int sample = 0; sample < subSampling; sample++)
                 {
@@ -296,7 +301,7 @@ public class PolyMeshData
                     float longHeight = (1 - samplingRatio) * CenterHeight;
                     float height = latHeight + longHeight;
 
-                    Vector3 vertex = samplingRatio * Vector3.Lerp(polySummits[polyIndex], polySummits[nextPolyIndex], subSamplingRatio);
+                    Vector3 vertex = samplingRatio * Vector3.Lerp(vertices[TI(Sampling, polyIndex)], vertices[TI(Sampling, nextPolyIndex)], subSamplingRatio);
 
                     if (Curving)
                     {
@@ -305,11 +310,49 @@ public class PolyMeshData
 
                         height = Mathf.Lerp(CenterHeight, latHeight, curveFactor);
                     }
-                    
-                    int vertexIndex = HIL2(polyIndex, sample, subSampling);
-                    vertices[vertexIndex] = new Vector3(vertex.x, height, vertex.z);
+
+                    vertices[TI(subSampling, polyIndex, sample)] = new Vector3(vertex.x, height, vertex.z);
                 }
             }
+        }
+        
+    }
+
+    private void SetUVs()
+    {
+        uvs = new Vector2[VerticesLen];
+
+        uvs[0] = new Vector2(0.5f, 0.5f);
+        for (int polyIndex = 0; polyIndex < PolyLen; polyIndex += 2)
+        {
+            int nextPolyIndex = (polyIndex + 1) % PolyLen;
+
+            uvs[BI(0, polyIndex)] = new Vector2(0f, 0f);
+            uvs[BI(0, nextPolyIndex)] = new Vector2(1f, 0f);
+            uvs[BI(1, polyIndex)] = new Vector2(0f, 1f);
+            uvs[BI(1, nextPolyIndex)] = new Vector2(1f, 1f);
+        }
+
+        for (int polyIndex = 0; polyIndex < PolyLen; polyIndex += 2)
+        {
+            int nextPolyIndex = (polyIndex + 1) % PolyLen;
+
+            for (int sample = 0; sample < Sampling; sample++)
+            {
+                float samplingRatio = (float)sample / Sampling;
+                float nextSamplingRatio = (float)((sample + 1) % Sampling) / Sampling;
+
+                uvs[MI(0, polyIndex, sample)] = new Vector2(samplingRatio, samplingRatio);
+                uvs[MI(0, nextPolyIndex, sample)] = new Vector2(nextSamplingRatio, samplingRatio);
+                uvs[MI(1, polyIndex, sample)] = new Vector2(samplingRatio, nextSamplingRatio);
+                uvs[MI(1, nextPolyIndex, sample)] = new Vector2(nextSamplingRatio, nextSamplingRatio);
+            }
+        }
+
+        float maxSize = TopSizes.Max();
+        for (int index = BaseLen + MiddleLen; index < VerticesLen; index++)
+        {
+            uvs[index] = new Vector2(vertices[index].x / maxSize, vertices[index].z / maxSize);
         }
     }
 
@@ -317,13 +360,14 @@ public class PolyMeshData
     {
         subMeshTriangles = new int[][] { new int[] { }, new int[] { }, };
 
-        for (int polyIndex = 0;  polyIndex < PolyLen; polyIndex++)
+        for (int polyIndex = 0; polyIndex < PolyLen; polyIndex++)
         {
             int nextPolyIndex = (polyIndex + 1) % PolyLen;
-            subMeshTriangles[0] = subMeshTriangles[0].Concat(new int[] { PolyLen, polyIndex, nextPolyIndex}).ToArray();
-            subMeshTriangles[0] = subMeshTriangles[0].Concat(new int[] 
-            { 
-                HIL1(polyIndex), nextPolyIndex, polyIndex, nextPolyIndex, HIL1(polyIndex), HIL1(nextPolyIndex),
+            subMeshTriangles[0] = subMeshTriangles[0].Concat(new int[] { 0, BI(0, polyIndex), BI(0, nextPolyIndex) }).ToArray();
+            subMeshTriangles[0] = subMeshTriangles[0].Concat(new int[]
+            {
+                BI(1, polyIndex), BI(0, nextPolyIndex), BI(0, polyIndex),
+                BI(0, nextPolyIndex), BI(1, polyIndex), BI(1, nextPolyIndex),
             }).ToArray();
         }
 
@@ -337,13 +381,13 @@ public class PolyMeshData
 
                 subMeshTriangles[1] = subMeshTriangles[1].Concat(new int[]
                 {
-                    HIL1(polyIndex, sample), HIL2(polyIndex, sample), HIL2(index, nextSample),
-                    HIL2(index, nextSample), HIL1(index, nextSample), HIL1(polyIndex, sample),
+                    MI(0, polyIndex, sample), MI(1, polyIndex, sample), MI(1, index, nextSample),
+                    MI(1, index, nextSample), MI(0, index, nextSample), MI(0, polyIndex, sample),
 
                 }).ToArray();
             }
         }
-
+        
         for (int index = 0; index < MeshHeights.Length; index++)
         {
             subMeshTriangles = subMeshTriangles.Append(new int[0]).ToArray();
@@ -359,9 +403,9 @@ public class PolyMeshData
                 {
                     int nextSample = (sample + 1) % subSampling;
 
-                    int vertexIndex1 = HIL2(polyIndex, sample, subSampling);
-                    int vertexIndex2 = HIL2(sample < subSampling - 1? polyIndex: nextPolyIndex, sample < subSampling - 1? sample: nextSample, subSampling - 1);
-                    int vertexIndex3 = HIL2(sample + 1 < subSampling? polyIndex: nextPolyIndex, nextSample, subSampling);
+                    int vertexIndex1 = TI(subSampling, polyIndex, sample);
+                    int vertexIndex2 = TI(subSampling - 1, sample < subSampling - 1 ? polyIndex : nextPolyIndex, sample < subSampling - 1 ? sample : nextSample);
+                    int vertexIndex3 = TI(subSampling, sample + 1 < subSampling ? polyIndex : nextPolyIndex, nextSample);
 
                     int subMeshIndex = GetSubMeshIndex(vertexIndex1, vertexIndex2, vertexIndex3);
 
@@ -371,9 +415,9 @@ public class PolyMeshData
                     {
                         int nextSubSample = (sample + 1) % (subSampling - 1);
 
-                        vertexIndex1 = HIL2(polyIndex, sample, subSampling - 1);
-                        vertexIndex2 = HIL2(sample + 1 < subSampling - 1? polyIndex: nextPolyIndex, nextSubSample, subSampling - 1);
-                        vertexIndex3 = HIL2(polyIndex, nextSample, subSampling);
+                        vertexIndex1 = TI(subSampling - 1, polyIndex, sample);
+                        vertexIndex2 = TI(subSampling - 1, sample + 1 < subSampling - 1 ? polyIndex : nextPolyIndex, nextSubSample);
+                        vertexIndex3 = TI(subSampling, polyIndex, nextSample);
 
                         subMeshIndex = GetSubMeshIndex(vertexIndex1, vertexIndex2, vertexIndex3);
 
@@ -384,53 +428,24 @@ public class PolyMeshData
         }
     }
 
-    private void SetUVs()
+    private void ReSetUVs()
     {
-        float maxSize = Mathf.Max(BaseSizes.Max(), TopSizes.Max());
+        float maxSize = TopSizes.Max();
 
         uvs = new Vector2[VerticesLen];
         for (int index = 0; index < vertices.Length; index++)
         {
             uvs[index] = new Vector2(vertices[index].x / maxSize, vertices[index].z / maxSize);
         }
-
-        uvs[PolyLen] = new Vector2(0.5f, 0.5f);
-        for (int polyIndex = 0; polyIndex < PolyLen; polyIndex += 2)
-        {
-            int nextPolyIndex = (polyIndex + 1) % PolyLen;
-
-            uvs[polyIndex] = new Vector2(0f, 0f);
-            uvs[nextPolyIndex] = new Vector2(1f, 0f);
-            uvs[HIL1(polyIndex)] = new Vector2(0f, 1f);
-            uvs[HIL1(nextPolyIndex)] = new Vector2(1f, 1f);
-        }
-
-        for (int polyIndex = 0; polyIndex < PolyLen; polyIndex += 2)
-        {
-            int nextPolyIndex = (polyIndex + 1) % PolyLen;
-
-            for (int sample = 0; sample < Sampling; sample++)
-            {
-                float samplingRatio = (float)sample / Sampling;
-                float nextSamplingRatio = (float)((sample + 1) % Sampling) / Sampling;
-
-                uvs[HIL1(polyIndex, sample)] = new Vector2(samplingRatio, samplingRatio);
-                uvs[HIL1(nextPolyIndex, sample)] = new Vector2(nextSamplingRatio, samplingRatio);
-                uvs[HIL2(polyIndex, sample, Sampling)] = new Vector2(samplingRatio, nextSamplingRatio);
-                uvs[HIL2(nextPolyIndex, sample, Sampling)] = new Vector2(nextSamplingRatio, nextSamplingRatio);
-            }
-        }
     }
 
-    private int HIL1(int polyIndex, int sample = 0) => PolyLen + 1 + (polyIndex * Sampling) + sample;
-
-    private int HIL2(int polyIndex, int sample = 0, int subSampling = -1)
+    private int BI(int layer, int polyIndex) => 1 + layer * PolyLen + polyIndex;
+    private int MI(int layer, int polyIndex, int sample = 0) => BaseLen + Sampling * (layer * PolyLen + polyIndex) + sample; 
+    private int TI(int subSampling, int polyIndex, int sample = 0)
     {
-        subSampling = subSampling < 0 ? Sampling : subSampling;
-
         int number = Mathf.RoundToInt(PolyLen / 2f * (Sampling * (Sampling + 1) - subSampling * (subSampling + 1)));
 
-        return PolyLen + 1 + (PolyLen * Sampling) + number + (polyIndex * subSampling) + sample;
+        return BaseLen + MiddleLen + number + (polyIndex * subSampling) + sample;
     }
 
     private int GetSubMeshIndex(int vertexIndex1, int vertexIndex2, int vertexIndex3)
